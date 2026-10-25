@@ -28,7 +28,14 @@ const participantSchema = new mongoose.Schema({
 }, { timestamps: true });
 participantSchema.index({ event: 1, employee: 1 }, { unique: true });
 
-const goodieSchema = new mongoose.Schema({ goodieName: { type: String, required: true }, description: String, category: { type: String, default: 'Other' }, totalQuantity: { type: Number, min: 0, required: true } }, { timestamps: true });
+const goodieSchema = new mongoose.Schema({
+  goodieName: { type: String, required: true },
+  description: String,
+  category: { type: String, default: 'Other' },
+  totalQuantity: { type: Number, min: 0, required: true },
+  eligibility: { type: String, enum: ['EVERYONE', 'SELECTED'], default: 'EVERYONE' },
+  eligibleEmployees: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+}, { timestamps: true });
 const eventGoodieSchema = new mongoose.Schema({ event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true }, goodie: { type: mongoose.Schema.Types.ObjectId, ref: 'Goodie', required: true }, allocatedQuantity: { type: Number, min: 1, required: true }, distributedQuantity: { type: Number, default: 0 } });
 eventGoodieSchema.index({ event: 1, goodie: 1 }, { unique: true });
 const distributionSchema = new mongoose.Schema({ event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' }, goodie: { type: mongoose.Schema.Types.ObjectId, ref: 'Goodie' }, employee: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, quantity: { type: Number, default: 1 }, status: { type: String, enum: ['PENDING', 'DISTRIBUTED'], default: 'PENDING' }, distributedAt: Date, distributedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, remarks: String });
